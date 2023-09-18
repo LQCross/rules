@@ -51,9 +51,9 @@ var OtherKey = ``; //无限账号Cookie json串数据, 请严格按照json格式
 /*以下样例为双账号("cookie"为必须,其他可选), 第一个账号仅包含Cookie, 第二个账号包含Cookie和金融签到Body: 
 
 var OtherKey = `[{
-  "cookie": "wskey=xxx;pin=yyy;"
+  "cookie": "wskey=xxx;pin_hash=yyy;"
 }, {
-  "cookie": "wskey=yyy;pin=xxx;",
+  "cookie": "wskey=yyy;pin_hash=xxx;",
   "jrBody": "reqData=xxx"
 }]`
 
@@ -1642,7 +1642,7 @@ function CookieMove(oldCk1, oldCk2, oldKey1, oldKey2, newKey) {
 function checkFormat(value) { //check format and delete duplicates
   let n, k, c = {};
   return value.reduce((t, i) => {
-    k = ((i.cookie || '').match(/(wskey|pin)=.+?;/g) || []).sort();
+    k = ((i.cookie || '').match(/(wskey|pin_hash)=.+?;/g) || []).sort();
     if (k.length == 2) {
       if ((n = k[1]) && !c[n]) {
         i.userName = i.userName ? i.userName : decodeURIComponent(n.split(/pin=(.+?);/)[1]);
@@ -1699,7 +1699,7 @@ function GetCookie() {
   const req = $request;
   if (req.method != 'OPTIONS' && req.headers) {
     const CV = (req.headers['Cookie'] || req.headers['cookie'] || '');
-    const ckItems = CV.match(/(wskey|pin)=.+?;/g);
+    const ckItems = CV.match(/(wskey|pin_hash)=.+?;/g);
     if (/^https:\/\/(me-|)api(\.m|)\.jd\.com\/(client\.|user_new)/.test(req.url)) {
       if (ckItems && ckItems.length == 2) {
         const value = CookieUpdate(null, ckItems.join(''))
